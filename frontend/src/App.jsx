@@ -21,7 +21,8 @@ function App() {
   }
 
   return (
-    <div>
+    <div className='App'>
+      <h1>NBA Shot Chart Analysis by Player</h1>
       <input type='text' placeholder='First Name' value={firstName} onChange={(e) => setFirstName(e.target.value)} />
       <input type='text' placeholder='Last Name' value={lastName} onChange={(e) => setLastName(e.target.value)} />
       <button onClick={handleSubmit}>Submit</button>
