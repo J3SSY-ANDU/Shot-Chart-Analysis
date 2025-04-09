@@ -1,6 +1,7 @@
-from fastapi import FastAPI, Query
+from fastapi import FastAPI, HTTPException, Query
+from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
-from api.shot_chart import get_player_id, get_team_id, get_made_shots, shot_chart
+from api.shot_chart import get_player_id, get_team_id, get_made_shots, shot_chart, get_players
 
 app = FastAPI()
 
@@ -18,13 +19,19 @@ def root():
     return {"message": "NBA Shot Chart API is running."}
 
 @app.get("/player")
-def get_player(firstname: str = Query(..., description="Player firstname, e.g. Stephen"), 
-               lastname: str = Query(..., description="Player lastname, e.g. Curry")):
-    """
-    Get the shot chart for a player.
-    """
+def get_player(firstname: str = Query(...), lastname: str = Query(...)):
     player_id = get_player_id(firstname, lastname)
+    if not player_id:
+        raise HTTPException(status_code=404, detail="Player not found")
     team_id = get_team_id(player_id)
-    made_shots_x, made_shots_y = get_made_shots(player_id, team_id)
-    shot_chart(made_shots_x, made_shots_y)
-    return {"player": f"{firstname} + {lastname}", "status": "request received"}
+    x, y = get_made_shots(player_id, team_id)
+    chart_path = shot_chart(x, y)
+    return FileResponse(chart_path, media_type="image/png")
+
+@app.get("/players")
+def get_players_names():
+    """
+    Get all players.
+    """
+    players = get_players()
+    return {"players": players}

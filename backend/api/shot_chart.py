@@ -2,7 +2,10 @@ from nba_api.stats.endpoints import shotchartdetail
 from nba_api.stats.endpoints import commonplayerinfo
 from nba_api.stats.endpoints import playerindex
 from matplotlib import pyplot as plt
+import matplotlib
+matplotlib.use("Agg")  # Use non-GUI backend
 import matplotlib.image as mpimg
+
 
 def get_player_id(firstname, lastname):
     player_index = playerindex.PlayerIndex().get_normalized_dict()['PlayerIndex']
@@ -34,6 +37,11 @@ def shot_chart(x, y, filename="static/shot_chart.png"):
     plt.savefig(filename)
     plt.close()
     return filename
+
+def get_players():
+    player_index = playerindex.PlayerIndex().get_normalized_dict()['PlayerIndex']
+    players = [{"id": player['PERSON_ID'], "firstname": player['PLAYER_FIRST_NAME'], "lastname": player['PLAYER_LAST_NAME']} for player in player_index]
+    return players
 
 
 
