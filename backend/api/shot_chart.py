@@ -24,18 +24,22 @@ def get_made_shots(player_id, team_id):
     made_shots_y = [shot['LOC_Y'] for shot in shot_details if shot['SHOT_MADE_FLAG'] == 1]
     return made_shots_x, made_shots_y
 
-def shot_chart(x, y, filename="static/shot_chart.png"):
+def shot_chart(x, y, firstname, lastname):
+    filename = f"static/{firstname.lower()}_{lastname.lower()}_shot_chart.png"
+    full_name = f"{firstname} {lastname}"
+    
     court_img = mpimg.imread("court.png")
-
     plt.figure(figsize=(10, 10))
     plt.xlim(-250, 250)
     plt.ylim(-50, 420)
     plt.imshow(court_img, extent=[-250, 250, -50, 420], zorder=0)
     plt.scatter(x, y, c='green', alpha=0.5, label='Made Shots')
+    plt.title(f"{full_name} Shot Chart", fontsize=20)
     plt.axis('off')
     plt.tight_layout()
     plt.savefig(filename)
     plt.close()
+
     return filename
 
 def get_players():

@@ -25,7 +25,7 @@ def get_player(firstname: str = Query(...), lastname: str = Query(...)):
         raise HTTPException(status_code=404, detail="Player not found")
     team_id = get_team_id(player_id)
     x, y = get_made_shots(player_id, team_id)
-    chart_path = shot_chart(x, y)
+    chart_path = shot_chart(x, y, firstname, lastname)
     return FileResponse(chart_path, media_type="image/png")
 
 @app.get("/players")
