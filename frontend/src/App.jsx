@@ -53,7 +53,7 @@ function App() {
           disablePortal
           id="combo-box-demo"
           options={players}
-          renderInput={(params) => <TextField {...params} label="Player Name"
+          renderInput={(params) => <TextField {...params} label="Choose a player"
             sx={{
               input: { color: 'white' },
               label: { color: 'white' },
