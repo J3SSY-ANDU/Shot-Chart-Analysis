@@ -9,6 +9,7 @@ function App() {
   const [lastName, setLastName] = useState('')
   const [players, setPlayers] = useState([])
   const [loading, setLoading] = useState(false)
+  const [selectedPlayer, setSelectedPlayer] = useState(null)
 
   useEffect(() => {
     const fetchPlayers = async () => {
@@ -34,14 +35,25 @@ function App() {
     event.preventDefault()
     try {
       setLoading(true)
+      if (!firstName || !lastName) {
+        alert('Please select a player')
+        setLoading(false)
+        return
+      }
       const res = await fetch(`/api/player?firstname=${firstName}&lastname=${lastName}`)
       const blob = await res.blob()
       const url = URL.createObjectURL(blob)
       window.open(url) // or set state to render <img src={url} />
       setLoading(false)
+      setSelectedPlayer(null)
+      setFirstName('')
+      setLastName('')
     } catch (error) {
       console.error('Error:', error)
       setLoading(false)
+      setSelectedPlayer(null)
+      setFirstName('')
+      setLastName('')
     }
   }
 
@@ -74,7 +86,9 @@ function App() {
                 },
               },
             }} />}
+          value={selectedPlayer}
           onChange={(event, value) => {
+            setSelectedPlayer(value)
             if (value) {
               setFirstName(value.firstname)
               setLastName(value.lastname)
