@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react'
 import './App.css'
 import CircularProgress from '@mui/material/CircularProgress';
+import Autocomplete from '@mui/material/Autocomplete';
+import TextField from '@mui/material/TextField';
 
 function App() {
   const [firstName, setFirstName] = useState('')
@@ -14,7 +16,12 @@ function App() {
         const response = await fetch('/api/players')
         const data = await response.json()
         console.log('Fetched players:', data)
-        setPlayers(data.players)
+        setPlayers(() => data.players.map(player => ({
+          label: `${player.firstname} ${player.lastname}`,
+          firstname: player.firstname,
+          lastname: player.lastname,
+          id: player.id
+        })))
       } catch (error) {
         console.error('Error fetching players:', error)
       }
@@ -37,30 +44,48 @@ function App() {
       setLoading(false)
     }
   }
-  
+
   return (
     <div className='App'>
       <h1>NBA Shot Chart Analysis by Player</h1>
-      <div style={{display: "flex", flexDirection: "column", gap: "2rem"}}>
-        <select 
-          onChange={(e) => {
-            const selectedId = parseInt(e.target.value)
-            const selectedPlayer = players.find(p => p.id === selectedId)
-            if (selectedPlayer) {
-              setFirstName(selectedPlayer.firstname)
-              setLastName(selectedPlayer.lastname)
+      <div style={{ display: "flex", flexDirection: "column", gap: "2rem" }}>
+        <Autocomplete
+          disablePortal
+          id="combo-box-demo"
+          options={players}
+          renderInput={(params) => <TextField {...params} label="Player Name"
+            sx={{
+              input: { color: 'white' },
+              label: { color: 'white' },
+              '& .MuiOutlinedInput-root': {
+                '& fieldset': { borderColor: 'white' },
+                '&:hover fieldset': { borderColor: '#646cff' },
+                '&.Mui-focused fieldset': { borderColor: '#646cff' },
+              },
+            }}
+            InputProps={{
+              ...params.InputProps,
+              sx: {
+                '& .MuiInputBase-input': {
+                  color: 'white', // input text
+                },
+                '& .MuiSvgIcon-root': {
+                  color: 'white', // dropdown icon
+                },
+              },
+            }} />}
+          onChange={(event, value) => {
+            if (value) {
+              setFirstName(value.firstname)
+              setLastName(value.lastname)
+            } else {
+              setFirstName('')
+              setLastName('')
             }
           }}
-          style={{padding: "0.5rem 0 0.5rem 0", fontSize: "1rem"}}
-        >
-          <option value=''>Select a player</option>
-          {players.map((player) => (
-            <option key={player.id} value={player.id}>
-              {player.firstname} {player.lastname}
-            </option>
-          ))}
-        </select>
-        <button onClick={handleGenerateChart} style={{width: "180px", alignSelf: "center"}}>{loading ? <CircularProgress size={18}/> : "Generate"}</button>
+        />
+
+        <button onClick={handleGenerateChart} style={{ width: "180px", alignSelf: "center" }}>{loading ? <CircularProgress size={18} /> : "Generate"}</button>
       </div>
     </div>
   )
