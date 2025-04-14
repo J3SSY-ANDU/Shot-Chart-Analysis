@@ -40,3 +40,20 @@
 .read-the-docs {
   color: #888;
 }
+
+html {
+  font-size: 16px; /* Base font size = 1rem = 16px */
+}
+
+@media (max-width: 768px) {
+  html {
+    font-size: 14px; /* For tablets: 1rem = 14px */
+  }
+}
+
+@media (max-width: 480px) {
+  html {
+    font-size: 12px; /* For phones: 1rem = 12px */
+  }
+}
+
